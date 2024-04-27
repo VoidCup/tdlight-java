@@ -5,6 +5,8 @@ import it.tdlight.Log;
 import it.tdlight.Slf4JLogMessageHandler;
 import it.tdlight.client.APIToken;
 import it.tdlight.client.AuthenticationSupplier;
+import it.tdlight.client.GenericResultHandler;
+import it.tdlight.client.Result;
 import it.tdlight.client.SimpleAuthenticationSupplier;
 import it.tdlight.client.SimpleTelegramClient;
 import it.tdlight.client.SimpleTelegramClientBuilder;
@@ -19,8 +21,11 @@ import it.tdlight.jni.TdApi.InputMessageText;
 import it.tdlight.jni.TdApi.Message;
 import it.tdlight.jni.TdApi.MessageContent;
 import it.tdlight.jni.TdApi.MessageSenderUser;
+import it.tdlight.jni.TdApi.Proxy;
 import it.tdlight.jni.TdApi.SendMessage;
 import it.tdlight.jni.TdApi.TextEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +36,8 @@ import java.util.concurrent.TimeUnit;
  * <a href="https://tdlight-team.github.io/tdlight-docs">The documentation of the TDLight functions can be found here</a>
  */
 public final class Example {
+
+	public static final Logger log = LoggerFactory.getLogger(Example.class);
 
 	public static void main(String[] args) throws Exception {
 		long adminId = Integer.getInteger("it.tdlight.example.adminid", 667900586);
@@ -74,6 +81,9 @@ public final class Example {
 
 			// Create and start the client
 			try (var app = new ExampleApp(clientBuilder, authenticationData, adminId)) {
+				app.getClient().send(new TdApi.AddProxy("127.0.0.1", 1080, true, new TdApi.ProxyTypeSocks5()), result -> {
+					log.info("set proxy success");
+				}, e -> {log.error("set proxy failed",e);});
 				// Get me
 				TdApi.User me = app.getClient().getMeAsync().get(1, TimeUnit.MINUTES);
 
