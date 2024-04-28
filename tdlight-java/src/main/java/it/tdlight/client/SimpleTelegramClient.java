@@ -41,6 +41,7 @@ public final class SimpleTelegramClient implements Authenticable, MutableTelegra
 
 	static {
 		try {
+			//进行初始化操作注册tdlib-jni
 			Init.init();
 		} catch (UnsupportedNativeLibraryException e) {
 			throw new RuntimeException("Can't load native libraries", e);
