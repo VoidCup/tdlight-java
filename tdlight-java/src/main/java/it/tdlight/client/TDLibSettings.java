@@ -1,5 +1,7 @@
 package it.tdlight.client;
 
+import it.tdlight.jni.TdApi;
+import it.tdlight.netio.NetProxy;
 import it.tdlight.util.LibraryVersion;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,6 +31,8 @@ public final class TDLibSettings {
 	private String deviceModel;
 	private String systemVersion;
 	private String applicationVersion;
+	private NetProxy netProxy;
+
 
 	@Deprecated
 	private TDLibSettings(boolean useTestDatacenter,
@@ -185,6 +189,14 @@ public final class TDLibSettings {
 
 	public void setApplicationVersion(String applicationVersion) {
 		this.applicationVersion = applicationVersion;
+	}
+
+	public void setProxy(NetProxy netProxy){
+		this.netProxy = netProxy;
+	}
+
+	public NetProxy getNetProxy() {
+		return netProxy;
 	}
 
 	@Deprecated

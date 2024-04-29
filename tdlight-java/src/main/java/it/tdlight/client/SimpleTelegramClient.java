@@ -135,6 +135,11 @@ public final class SimpleTelegramClient implements Authenticable, MutableTelegra
 		this.authenticationData = authenticationData;
 		createDirectories();
 		client.initialize(this::handleUpdate, this::handleUpdateException, this::handleDefaultException);
+		if(settings.getNetProxy() != null){
+			this.client.send(settings.getNetProxy().covertAddProxyFunction(),
+					proxy -> {LOG.info("set proxy success: {}",proxy.toString());},
+					th -> {LOG.error("set proxy failed",th);});
+		}
 	}
 
 	private String getTestCode(AuthenticationSupplier<?> authenticationData) {
