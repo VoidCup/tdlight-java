@@ -26,6 +26,7 @@ import java.util.Objects;
 
 /**
  * Identify the class by using the Constructor.
+ * TDAPI.Class.CONSTRUCTOR与标识符之间的映射缓存
  */
 @SuppressWarnings("rawtypes")
 public final class ConstructorDetector {

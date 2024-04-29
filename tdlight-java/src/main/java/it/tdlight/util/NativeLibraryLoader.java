@@ -176,6 +176,7 @@ public final class NativeLibraryLoader {
 		List<Throwable> suppressed = new ArrayList<Throwable>();
 		try {
 			// first try to load from java.library.path
+			// 先从系统的java.library.path路径中加载(windows则先从path系统路径加载)
 			loadLibrary(loader, name, false);
 			return;
 		} catch (Throwable ex) {
@@ -183,11 +184,13 @@ public final class NativeLibraryLoader {
 		}
 
 		String libname = System.mapLibraryName(name);
+		// META-INF/tdlightjni/tdjni.windows_amd64.dll 补充后缀dll或者dylib
 		String path = NATIVE_RESOURCE_HOME + libname;
 
 		InputStream in = null;
 		OutputStream out = null;
 		Path tmpFile = null;
+		// 从类加载器中获取jar包下dll路径
 		URL url = getResource(path, loader);
 		try {
 			if (url == null) {
@@ -211,6 +214,7 @@ public final class NativeLibraryLoader {
 			String prefix = libname.substring(0, index);
 			String suffix = libname.substring(index);
 
+			// 将jar包下的dll写到系统临时目录
 			tmpFile = createTempFile(prefix, suffix, WORKDIR);
 			in = url.openStream();
 			out = Files.newOutputStream(tmpFile, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -233,6 +237,7 @@ public final class NativeLibraryLoader {
 			closeQuietly(out);
 			out = null;
 
+			// 以绝对路径方式将在系统临时目录(指定工作目录)下的dll文件加载到java.libray.path中
 			loadLibrary(loader, tmpFile.toString(), true);
 		} catch (UnsatisfiedLinkError e) {
 			try {
