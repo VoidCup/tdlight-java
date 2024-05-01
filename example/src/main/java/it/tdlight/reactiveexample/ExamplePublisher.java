@@ -22,9 +22,6 @@ public class ExamplePublisher extends Thread implements Publisher<String>{
 
 	private static final Logger LOG = LoggerFactory.getLogger(ExamplePublisher.class);
 
-	private static final int CACHE_SIZE = 10000;
-
-	private String[] BUFFER_CACHE = new String[CACHE_SIZE];
 
 	private final List<Subscriber<String>> subscribers = new ArrayList<>(8);
 
@@ -45,19 +42,14 @@ public class ExamplePublisher extends Thread implements Publisher<String>{
 	public void run() {
 		LOG.info("{} runnable",ExamplePublisher.class.getSimpleName());
 		while (!Thread.currentThread().isInterrupted()){
-			if(BUFFER_CACHE.length == CACHE_SIZE){
-				try {
-					TimeUnit.SECONDS.sleep(10);
-				} catch (InterruptedException e) {
-					throw new RuntimeException(e);
-				}
+			for (Subscriber<String> subscriber : subscribers) {
+				subscriber.onNext(UUID.randomUUID().toString());
 			}
-			BUFFER_CACHE
 		}
 	}
 
 	@Override
 	public void subscribe(Subscriber<? super String> subscriber) {
-		subscribers.add(new ExampleSubscriber());
+		subscribers.add(new ExamplesSubscription());
 	}
 }

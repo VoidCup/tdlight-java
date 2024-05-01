@@ -13,8 +13,6 @@ import java.util.concurrent.Flow.Subscriber;
 public class ExampleReactive {
 
 	public static void main(String[] args) {
-		Flow.Publisher<String> publisher = subscriber -> {
-
-		};
+//		Flow.Publisher<String> publisher
 	}
 }
