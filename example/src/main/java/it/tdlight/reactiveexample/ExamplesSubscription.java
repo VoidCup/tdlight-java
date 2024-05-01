@@ -1,6 +1,8 @@
 package it.tdlight.reactiveexample;
 
 
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -14,14 +16,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ExamplesSubscription implements Subscription {
 
 	private final AtomicBoolean cancelled = new AtomicBoolean(false);
-	private long requested = 10;
+	private final Subscriber<String> subscriber;
+	private final Publisher<String> publisher;
 
-	public ExamplesSubscription() {
+	public ExamplesSubscription(Subscriber<String> subscriber, Publisher<String> publisher) {
+		this.subscriber = subscriber;
+		this.publisher = publisher;
 	}
 
 	@Override
 	public void request(long n) {
-		requested = n;
+
 	}
 
 	@Override

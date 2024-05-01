@@ -50,6 +50,5 @@ public class ExamplePublisher extends Thread implements Publisher<String>{
 
 	@Override
 	public void subscribe(Subscriber<? super String> subscriber) {
-		subscribers.add(new ExamplesSubscription());
 	}
 }
