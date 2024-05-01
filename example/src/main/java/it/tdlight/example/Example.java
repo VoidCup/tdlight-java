@@ -65,7 +65,7 @@ public final class Example {
 			// Configure the session directory.
 			// After you authenticate into a session, the authentication will be skipped from the next restart!
 			// If you want to ensure to match the authentication supplier user/bot with your session user/bot,
-			//   you can name your session directory after your user id, for example: "tdlib-session-id12345"
+			// you can name your session directory after your user id, for example: "tdlib-session-id12345"
 			Path sessionPath = Paths.get("example-tdlight-session");
 			settings.setDatabaseDirectoryPath(sessionPath.resolve("data"));
 			settings.setDownloadedFilesDirectoryPath(sessionPath.resolve("downloads"));
