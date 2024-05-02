@@ -3,6 +3,8 @@ package it.tdlight;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+import com.google.common.base.Joiner;
+import it.tdlight.tdnative.NativeClient;
 import it.tdlight.util.SimpleIntQueue;
 import it.tdlight.util.IntSwapper;
 import it.tdlight.util.SpinWaitSupport;
@@ -15,15 +17,22 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * ResponseReceiver 是在 TDLib C/C++ 库中用于接收异步请求结果的接口。 它用于异步方式处理 TDLib 发出的请求，并接收相应的执行结果
+ */
 abstract class ResponseReceiver extends Thread implements AutoCloseable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResponseReceiver.class);
+	//优化调度代码的设置
 	private static final String FLAG_USE_OPTIMIZED_DISPATCHER = "tdlight.dispatcher.use_optimized_dispatcher";
-	private static final boolean USE_OPTIMIZED_DISPATCHER
-			= Boolean.parseBoolean(System.getProperty(FLAG_USE_OPTIMIZED_DISPATCHER, "true"));
+	private static final boolean USE_OPTIMIZED_DISPATCHER = Boolean.parseBoolean(System.getProperty(
+			FLAG_USE_OPTIMIZED_DISPATCHER,
+			"true"
+	));
 	private static final int MAX_EVENTS = 100;
 	private static final int[] originalSortingSource = new int[MAX_EVENTS];
 
@@ -33,6 +42,9 @@ abstract class ResponseReceiver extends Thread implements AutoCloseable {
 		}
 	}
 
+	/**
+	 * 事件处理器 {@linkplain ClientFactoryImpl#handleClientEvents(int, boolean, long[], it.tdlight.jni.TdApi.Object[], int, int)}
+	 */
 	private final EventsHandler eventsHandler;
 	private final int[] clientIds = new int[MAX_EVENTS];
 	private final long[] eventIds = new long[MAX_EVENTS];
@@ -69,15 +81,29 @@ abstract class ResponseReceiver extends Thread implements AutoCloseable {
 		try {
 			boolean interrupted;
 			while (!(interrupted = Thread.interrupted()) && (!closeRequested || registeredClients.length > 0)) {
+				if (LOG.isDebugEnabled()) {
+					Joiner on = Joiner.on(",");
+					String cidStr = on.join(Arrays.stream(clientIds).boxed().collect(Collectors.toSet()));
+					String eidStr = on.join(Arrays.stream(eventIds).boxed().collect(Collectors.toSet()));
+					String eStr = on.join(Arrays
+							.stream(events)
+							.filter(Objects::nonNull)
+							.map(t -> t.getClass().getSimpleName())
+							.collect(Collectors.toSet()));
+					LOG.debug("receive: clientIds = {}\n,eventIds = {}\n,events = {}", cidStr, eidStr, eStr);
+				}
+				/** 调用native方法 {@linkplain NativeClient#nativeClientReceive(int[], long[], it.tdlight.jni.TdApi.Object[], double)}} **/
 				// Timeout is expressed in seconds
 				int resultsCount = receive(clientIds, eventIds, events, 2.0);
 				LOG.debug("Received {} events", resultsCount);
 
 				if (resultsCount <= 0) {
+					// 阻塞当前线程10ms
 					SpinWaitSupport.onSpinWait();
 					continue;
 				}
 
+				//重置队列
 				closedClients.reset();
 
 				if (USE_OPTIMIZED_DISPATCHER) {
@@ -130,7 +156,9 @@ abstract class ResponseReceiver extends Thread implements AutoCloseable {
 							lastClientIdEventsCount++;
 						}
 					}
-				} else {
+				}
+				else {
+					//此处逻辑和上面的逻辑一致，区别在于调度算法不同
 					class Event {
 
 						public final int clientId;
@@ -215,6 +243,7 @@ abstract class ResponseReceiver extends Thread implements AutoCloseable {
 
 			LOG.trace("ResponseReceiver will no longer process updates");
 
+			//线程中断处理
 			if (interrupted) {
 				for (int clientId : registeredClients) {
 					eventsHandler.handleClientEvents(clientId, true, clientEventIds, clientEvents, 0, 0);
