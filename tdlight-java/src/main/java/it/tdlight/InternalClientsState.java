@@ -1,5 +1,7 @@
 package it.tdlight;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -7,6 +9,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.StampedLock;
 
 public class InternalClientsState {
+
+	private static final Logger log = LoggerFactory.getLogger(InternalClientsState.class);
+
 	static final int STATE_INITIAL = 0;
 	static final int STATE_STARTING = 1;
 	static final int STATE_STARTED = 2;
@@ -26,6 +31,7 @@ public class InternalClientsState {
 	 * Before calling this method, lock using getEventsHandlingLock().writeLock()
 	 */
 	public void registerClient(int clientId, ClientEventsHandler internalClient) {
+		log.debug("registerClient: clientId={}, internalClient={}", clientId, internalClient.getClass().getSimpleName());
 		boolean replaced = registeredClientEventHandlers.put(clientId, internalClient) != null;
 		if (replaced) {
 			throw new IllegalStateException("Client " + clientId + " already registered");

@@ -58,9 +58,8 @@ public class Example2 {
 			try (var app = new ExampleApp(clientBuilder, authenticationData, adminId)) {
 				// Get me
 				TdApi.User me = app.getClient().getMeAsync().get(1, TimeUnit.MINUTES);
-				while (true){
-
-				}
+				TimeUnit.SECONDS.sleep(30);
+				app.getClient().sendClose();
 			}
 		}
 	}
