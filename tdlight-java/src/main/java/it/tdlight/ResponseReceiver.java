@@ -71,7 +71,7 @@ abstract class ResponseReceiver extends Thread implements AutoCloseable {
 			while (!(interrupted = Thread.interrupted()) && (!closeRequested || registeredClients.length > 0)) {
 				// Timeout is expressed in seconds
 				int resultsCount = receive(clientIds, eventIds, events, 2.0);
-				LOG.trace("Received {} events", resultsCount);
+				LOG.debug("Received {} events", resultsCount);
 
 				if (resultsCount <= 0) {
 					SpinWaitSupport.onSpinWait();
