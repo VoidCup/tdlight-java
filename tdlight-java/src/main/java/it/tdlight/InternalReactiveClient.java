@@ -192,13 +192,15 @@ final class InternalReactiveClient implements ClientEventsHandler, ReactiveTeleg
 							logger.trace(TG_MARKER, "Client {} is already closed, sending \"Ok\" to: {}", clientId, query);
 							subscriber.onNext(new TdApi.Ok());
 							subscriber.onComplete();
-						} else if (clientId == null) {
+						}
+						else if (clientId == null) {
 							logger.debug(TG_MARKER,
 									"Can't send a request to TDLib before calling \"createAndRegisterClient\" function!"
 							);
 							subscriber.onError(new IllegalStateException(
 									"Can't send a request to TDLib before calling \"createAndRegisterClient\" function!"));
-						} else {
+						}
+						else {
 							long queryId = clientManagerState.getNextQueryId();
 
 							// Handle timeout

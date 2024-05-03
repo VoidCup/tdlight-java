@@ -2,6 +2,8 @@ package it.tdlight.reactiveexample;
 
 import it.tdlight.ClientFactory;
 import it.tdlight.ReactiveTelegramClient;
+import it.tdlight.Signal;
+import it.tdlight.SignalListener;
 import it.tdlight.jni.TdApi;
 import it.tdlight.jni.TdApi.Object;
 import it.tdlight.netio.NetProxy;
@@ -31,34 +33,9 @@ public class ReactiveExample {
 
 		reactive.createAndRegisterClient();
 
-		reactive.send(NetProxy.localSocket5Proxy().covertAddProxyFunction(), Duration.ofSeconds(180)).subscribe(new Subscriber<Object>() {
+		reactive.setListener(signal -> System.out.println("signalListener: "+signal.getUpdate().getClass().getSimpleName()));
 
-			private Subscription subscription;
-
-			@Override
-			public void onSubscribe(Subscription s) {
-				log.info("onSubscribe");
-				this.subscription = s;
-				this.subscription.request(1);
-			}
-
-			@Override
-			public void onNext(Object object) {
-				log.info("onNext");
-				this.subscription.request(1);
-			}
-
-			@Override
-			public void onError(Throwable t) {
-				log.warn("onError", t);
-			}
-
-			@Override
-			public void onComplete() {
-				log.info("onComplete");
-			}
-		});
-
+		reactive.send(NetProxy.localSocket5Proxy().covertAddProxyFunction(), Duration.ofSeconds(180));
 
 		TimeUnit.DAYS.sleep(1);
 	}

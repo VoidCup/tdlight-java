@@ -5,16 +5,20 @@ import it.tdlight.Log;
 import it.tdlight.Slf4JLogMessageHandler;
 import it.tdlight.client.APIToken;
 import it.tdlight.client.AuthenticationSupplier;
+import it.tdlight.client.GenericResultHandler;
+import it.tdlight.client.Result;
 import it.tdlight.client.SimpleAuthenticationSupplier;
 import it.tdlight.client.SimpleTelegramClientBuilder;
 import it.tdlight.client.SimpleTelegramClientFactory;
 import it.tdlight.client.TDLibSettings;
 import it.tdlight.example.Example.ExampleApp;
 import it.tdlight.jni.TdApi;
+import it.tdlight.jni.TdApi.Chats;
 import it.tdlight.jni.TdApi.CreatePrivateChat;
 import it.tdlight.jni.TdApi.FormattedText;
 import it.tdlight.jni.TdApi.InputMessageText;
 import it.tdlight.jni.TdApi.Message;
+import it.tdlight.jni.TdApi.Object;
 import it.tdlight.jni.TdApi.SendMessage;
 import it.tdlight.jni.TdApi.TextEntity;
 import it.tdlight.netio.NetProxy;
@@ -58,8 +62,16 @@ public class Example2 {
 			try (var app = new ExampleApp(clientBuilder, authenticationData, adminId)) {
 				// Get me
 				TdApi.User me = app.getClient().getMeAsync().get(1, TimeUnit.MINUTES);
-				TimeUnit.SECONDS.sleep(30);
-				app.getClient().sendClose();
+
+				app.getClient().send(new TdApi.GetChats(), result -> {
+					for (int i = 0; i < result.get().chatIds.length; i++) {
+						log.info("Chat #{}",result.get().chatIds[i]);
+					}
+				},th -> {
+					log.error("Error", th);
+				});
+
+				TimeUnit.DAYS.sleep(30);
 			}
 		}
 	}
