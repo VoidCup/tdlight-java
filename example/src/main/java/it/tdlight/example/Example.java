@@ -5,8 +5,6 @@ import it.tdlight.Log;
 import it.tdlight.Slf4JLogMessageHandler;
 import it.tdlight.client.APIToken;
 import it.tdlight.client.AuthenticationSupplier;
-import it.tdlight.client.GenericResultHandler;
-import it.tdlight.client.Result;
 import it.tdlight.client.SimpleAuthenticationSupplier;
 import it.tdlight.client.SimpleTelegramClient;
 import it.tdlight.client.SimpleTelegramClientBuilder;
@@ -16,19 +14,17 @@ import it.tdlight.jni.TdApi;
 import it.tdlight.jni.TdApi.AuthorizationState;
 import it.tdlight.jni.TdApi.CreatePrivateChat;
 import it.tdlight.jni.TdApi.FormattedText;
-import it.tdlight.jni.TdApi.GetChat;
 import it.tdlight.jni.TdApi.InputMessageText;
 import it.tdlight.jni.TdApi.Message;
 import it.tdlight.jni.TdApi.MessageContent;
 import it.tdlight.jni.TdApi.MessageSenderUser;
-import it.tdlight.jni.TdApi.Proxy;
 import it.tdlight.jni.TdApi.SendMessage;
 import it.tdlight.jni.TdApi.TextEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Example class for TDLight Java

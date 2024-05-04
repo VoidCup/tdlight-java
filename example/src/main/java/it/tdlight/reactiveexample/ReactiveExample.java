@@ -2,17 +2,11 @@ package it.tdlight.reactiveexample;
 
 import it.tdlight.ClientFactory;
 import it.tdlight.ReactiveTelegramClient;
-import it.tdlight.Signal;
-import it.tdlight.SignalListener;
-import it.tdlight.jni.TdApi;
-import it.tdlight.jni.TdApi.Object;
 import it.tdlight.netio.NetProxy;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author DXH

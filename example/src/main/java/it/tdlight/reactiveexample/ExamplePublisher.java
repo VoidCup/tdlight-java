@@ -1,15 +1,12 @@
 package it.tdlight.reactiveexample;
 
-import it.tdlight.jni.TdApi.CanSendMessageToUserResultUserIsDeleted;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author DXH
