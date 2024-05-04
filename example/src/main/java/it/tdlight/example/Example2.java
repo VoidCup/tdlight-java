@@ -13,6 +13,7 @@ import it.tdlight.client.SimpleTelegramClientFactory;
 import it.tdlight.client.TDLibSettings;
 import it.tdlight.example.Example.ExampleApp;
 import it.tdlight.jni.TdApi;
+import it.tdlight.jni.TdApi.ChatList;
 import it.tdlight.jni.TdApi.Chats;
 import it.tdlight.jni.TdApi.CreatePrivateChat;
 import it.tdlight.jni.TdApi.FormattedText;
@@ -47,7 +48,7 @@ public class Example2 {
 		Log.setLogMessageHandler(1, new Slf4JLogMessageHandler());
 
 		try(SimpleTelegramClientFactory factory = new SimpleTelegramClientFactory()){
-			APIToken apiToken = new APIToken(26364691, "220294fb72f2dedc92900b35fc8d7c92");
+			APIToken apiToken = new APIToken(0, "");
 
 			TDLibSettings settings = TDLibSettings.create(apiToken);
 
@@ -57,19 +58,11 @@ public class Example2 {
 			settings.setProxy(NetProxy.localSocket5Proxy());
 			// Prepare a new client builder
 			SimpleTelegramClientBuilder clientBuilder = factory.builder(settings);
-			SimpleAuthenticationSupplier<?> authenticationData = AuthenticationSupplier.user("8615717022782");
+			SimpleAuthenticationSupplier<?> authenticationData = AuthenticationSupplier.user("");
 			// Create and start the client
 			try (var app = new ExampleApp(clientBuilder, authenticationData, adminId)) {
 				// Get me
 				TdApi.User me = app.getClient().getMeAsync().get(1, TimeUnit.MINUTES);
-
-				app.getClient().send(new TdApi.GetChats(), result -> {
-					for (int i = 0; i < result.get().chatIds.length; i++) {
-						log.info("Chat #{}",result.get().chatIds[i]);
-					}
-				},th -> {
-					log.error("Error", th);
-				});
 
 				TimeUnit.DAYS.sleep(30);
 			}

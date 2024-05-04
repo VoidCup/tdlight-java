@@ -123,7 +123,7 @@ public final class Example {
 			clientBuilder.addCommandHandler("stop", this::onStopCommand);
 
 			// Add an example update handler that prints every received message
-			clientBuilder.addUpdateHandler(TdApi.UpdateNewMessage.class, this::onUpdateNewMessage);
+//			clientBuilder.addUpdateHandler(TdApi.UpdateNewMessage.class, this::onUpdateNewMessage);
 
 			// Build the client
 			this.client = clientBuilder.build(authenticationData);
